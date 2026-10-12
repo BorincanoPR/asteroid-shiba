@@ -1,3 +1,6 @@
 {
-  "installCommand": "npm install --omit=dev --no-audit --no-fund"
+  "framework": null,
+  "installCommand": "echo skip",
+  "buildCommand": "mkdir -p dist && cp asteroid.html dist/index.html && cp asteroid.html dist/asteroid.html",
+  "outputDirectory": "dist"
 }
