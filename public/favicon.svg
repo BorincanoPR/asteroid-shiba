@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" role="img" aria-label="Asteroid Shiba">
+  <rect width="16" height="16" rx="3.5" fill="#050505"/>
+  <polygon points="1.2,7.4 3.7,0.8 6.5,7.4" fill="#F0C430"/>
+  <polygon points="9.5,7.4 12.3,0.8 14.8,7.4" fill="#F0C430"/>
+  <circle cx="8" cy="9.3" r="4.7" fill="#9AA3AD"/>
+  <ellipse cx="8" cy="9.5" rx="3.2" ry="2.15" fill="#D7E6F2"/>
+</svg>

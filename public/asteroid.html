@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Asteroid Shiba</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --void: #04060e;
+    --panel: #09111c;
+    --line: #173049;
+    --frost: #e7f6ff;
+    --steel: #8eabc0;
+    --signal: #3ad7ff;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background-color: var(--void);
+    background-image:
+      linear-gradient(rgba(58,215,255,.07) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(58,215,255,.07) 1px, transparent 1px);
+    background-size: 72px 72px;
+    color: var(--frost);
+    font-family: "IBM Plex Sans", system-ui, sans-serif;
+    line-height: 1.5;
+  }
+  a { color: inherit; }
+  button, a.btn { cursor: pointer; }
+  img { max-width: 100%; display: block; }
+  .wrap { width: min(1120px, calc(100% - 32px)); margin: 0 auto; }
+  header {
+    position: sticky; top: 0; z-index: 5;
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    padding: 14px 16px;
+    border-bottom: 1px solid rgba(58,215,255,.3);
+    background: rgba(4,6,14,.9);
+    backdrop-filter: blur(10px);
+  }
+  .brand { font-family: "Barlow Condensed", sans-serif; letter-spacing: .22em; font-size: 28px; text-decoration: none; }
+  nav { display: flex; gap: 22px; }
+  nav a { font-family: "Barlow Condensed", sans-serif; letter-spacing: .16em; text-transform: uppercase; text-decoration: none; color: var(--steel); font-size: 15px; }
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-height: 44px; padding: 0 18px;
+    font-family: "Barlow Condensed", sans-serif; letter-spacing: .16em; text-transform: uppercase;
+    text-decoration: none; border: 1px solid var(--signal); background: var(--signal); color: var(--void);
+    box-shadow: 0 0 24px rgba(58,215,255,.45);
+  }
+  .btn.ghost { background: transparent; color: var(--signal); box-shadow: none; }
+  .btn.quiet { background: transparent; color: var(--frost); border-color: var(--line); box-shadow: none; }
+  .hero { display: grid; gap: 28px; align-items: center; padding: 28px 0 8px; }
+  .kicker { font-family: "Barlow Condensed", sans-serif; letter-spacing: .18em; text-transform: uppercase; color: var(--steel); margin: 0; }
+  h1, h2, h3 { font-family: "Barlow Condensed", sans-serif; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; margin: 0; line-height: .95; }
+  h1 { font-size: clamp(52px, 8vw, 92px); }
+  h2 { font-size: clamp(40px, 6vw, 68px); }
+  .clock { font-family: "Barlow Condensed", sans-serif; font-size: clamp(52px, 8vw, 88px); color: var(--signal); margin: 18px 0 0; font-variant-numeric: tabular-nums; text-shadow: 0 0 28px rgba(58,215,255,.75); }
+  .phase { font-family: "Barlow Condensed", sans-serif; letter-spacing: .16em; text-transform: uppercase; font-size: 22px; }
+  .lead { color: var(--steel); max-width: 38rem; }
+  .frame { position: relative; border: 1px solid rgba(58,215,255,.5); box-shadow: inset 0 0 40px rgba(58,215,255,.12), 0 0 32px rgba(58,215,255,.16); }
+  .frame span { position: absolute; width: 18px; height: 18px; border-color: var(--signal); }
+  .frame .a { top: -1px; left: -1px; border-top: 2px solid; border-left: 2px solid; }
+  .frame .b { top: -1px; right: -1px; border-top: 2px solid; border-right: 2px solid; }
+  .frame .c { bottom: -1px; left: -1px; border-bottom: 2px solid; border-left: 2px solid; }
+  .frame .d { bottom: -1px; right: -1px; border-bottom: 2px solid; border-right: 2px solid; }
+  .frame img { width: 100%; aspect-ratio: 1; object-fit: cover; object-position: top; }
+  .readouts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); margin-top: 28px; }
+  .readouts div { background: rgba(4,6,14,.85); padding: 12px; }
+  .readouts small { display: block; font-family: "Barlow Condensed", sans-serif; letter-spacing: .16em; text-transform: uppercase; color: var(--steel); }
+  .readouts strong { font-family: "Barlow Condensed", sans-serif; font-size: 26px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .panel { border: 1px solid var(--line); background: rgba(4,6,14,.8); margin-top: 1px; }
+  .panel head, .bar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; padding: 8px 12px; border-bottom: 1px solid var(--line); }
+  .bar p { margin: 0; font-family: "Barlow Condensed", sans-serif; letter-spacing: .16em; text-transform: uppercase; color: var(--steel); font-size: 14px; }
+  .controls { display: flex; flex-wrap: wrap; gap: 8px; }
+  .controls button { min-height: 44px; padding: 0 12px; background: transparent; color: var(--frost); border: 1px solid var(--line); font-family: "Barlow Condensed", sans-serif; letter-spacing: .14em; text-transform: uppercase; }
+  .controls button[aria-pressed="true"] { background: var(--signal); color: var(--void); border-color: var(--signal); }
+  svg.chart { width: 100%; height: 240px; display: block; }
+  .note { color: var(--steel); font-size: 14px; }
+  section { padding: 64px 0; border-top: 1px solid var(--line); }
+  .split { display: grid; gap: 28px; align-items: center; }
+  .soon { font-family: "Barlow Condensed", sans-serif; font-size: clamp(42px, 7vw, 72px); letter-spacing: .12em; text-transform: uppercase; color: var(--signal); margin: 16px 0; text-shadow: 0 0 28px rgba(58,215,255,.75); }
+  .grid2 { display: grid; gap: 0 48px; }
+  article { border-top: 1px solid var(--line); padding: 22px 0; }
+  article h3 { font-size: 30px; margin-top: 6px; }
+  .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--line); border: 1px solid var(--line); margin-top: 28px; }
+  .stats div { background: var(--void); padding: 16px; }
+  .stats small { font-family: "Barlow Condensed", sans-serif; letter-spacing: .14em; text-transform: uppercase; color: var(--steel); }
+  .stats strong { display: block; margin-top: 6px; font-family: "Barlow Condensed", sans-serif; font-size: 26px; font-weight: 600; }
+  .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+  .mint { margin-top: 16px; border: 1px solid var(--line); padding: 14px; display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; }
+  .mint code { font-family: "Barlow Condensed", sans-serif; font-size: 18px; letter-spacing: .04em; word-break: break-all; }
+  footer { border-top: 1px solid var(--line); color: var(--steel); font-size: 14px; padding: 28px 0 48px; display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between; }
+  footer a { font-family: "Barlow Condensed", sans-serif; letter-spacing: .14em; text-transform: uppercase; text-decoration: none; margin-right: 16px; }
+  @media (min-width: 860px) {
+    .hero, .split { grid-template-columns: 1fr 1fr; }
+    .grid2 { grid-template-columns: 1fr 1fr; }
+    .stats { grid-template-columns: repeat(4, 1fr); }
+    svg.chart { height: 280px; }
+  }
+  @media (max-width: 720px) {
+    nav { display: none; }
+    .hero { padding-top: 18px; }
+    .hero .copy { order: 2; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <a class="brand" href="#transmision">ASTEROID</a>
+  <nav>
+    <a href="#transmision">Transmisión</a>
+    <a href="#peluche">Peluche</a>
+    <a href="#historia">Historia</a>
+    <a href="#moneda">Moneda</a>
+  </nav>
+  <a class="btn" href="#moneda">Comprar</a>
+</header>
+<main>
+  <div class="wrap hero" id="transmision">
+    <div class="frame">
+      <span class="a"></span><span class="b"></span><span class="c"></span><span class="d"></span>
+      <img src="/mission/helmet.jpg" alt="Asteroid, Shiba blanco con casco de burbuja y traje azul, flotando en el espacio">
+    </div>
+    <div class="copy">
+      <p class="kicker">Simulación · Polaris Dawn</p>
+      <h1>Asteroid Shiba</h1>
+      <p class="clock" id="clock">T− 00:00:15</p>
+      <p class="phase" id="phase">Ventana abierta</p>
+      <p class="lead">Orejas esponjosas, cola en el aire. No es un cachorro común: es el pionero que flotó en la Crew Dragon y volvió a la Tierra para acurrucarse de noche.</p>
+    </div>
+  </div>
+  <div class="wrap">
+    <div class="readouts">
+      <div><small>Altitud</small><strong id="alt">0,0 km</strong></div>
+      <div><small>Velocidad</small><strong id="vel">0,00 km/s</strong></div>
+      <div><small>Alcance</small><strong id="down">0,0 km</strong></div>
+    </div>
+    <div class="panel">
+      <div class="bar">
+        <p>Telemetría · perfil de cohete</p>
+        <div class="controls">
+          <button type="button" id="play">Pausa</button>
+          <button type="button" id="replay">Repetir</button>
+          <button type="button" data-rate="1">1×</button>
+          <button type="button" data-rate="4">4×</button>
+          <button type="button" data-rate="8" aria-pressed="true">8×</button>
+        </div>
+      </div>
+      <svg class="chart" id="chart" viewBox="0 0 640 240" role="img" aria-label="Gráfica de ascenso"><path d="M48 210 C 160 200, 280 160, 400 80 S 560 30, 610 24" fill="none" stroke="#3ad7ff" stroke-width="2"/></svg>
+    </div>
+    <p class="note">Cuenta al estilo de una transmisión. No es un lanzamiento real de SpaceX.</p>
+  </div>
+
+  <section id="peluche">
+    <div class="wrap split">
+      <div class="frame">
+        <span class="a"></span><span class="b"></span><span class="c"></span><span class="d"></span>
+        <img src="/mission/helmet.jpg" alt="Asteroid flotando en el vacío">
+      </div>
+      <div>
+        <p class="kicker" style="color:var(--signal)">Tienda · edición oficial</p>
+        <h2>Asteroid Plush</h2>
+        <p class="soon">Coming soon</p>
+        <p class="lead">Asteroid el Shiba, con las orejas más esponjosas, no es un cachorro común: es un pionero espacial. Se aventura al cosmos moviendo la cola con deleite y luego regresa a la Tierra para acurrucarse por la noche. Lo diseñó Liv P, miembro honorario del equipo Polaris Dawn.</p>
+        <p class="note">El peluche todavía no está a la venta.</p>
+        <div class="actions">
+          <a class="btn" href="https://shop.spacex.com/products/spacex-asteroid-mascot" target="_blank" rel="noreferrer">Coming soon</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="historia">
+    <div class="wrap">
+      <p class="kicker">Bitácora</p>
+      <h2>Del lápiz a la órbita</h2>
+      <div class="grid2" style="margin-top:28px">
+        <article><p class="kicker">01 · El dibujo</p><h3>Liv P, en media hora</h3><p class="lead">En enero de 2022, Liv Perrotto diseñó a un Shiba con traje espacial. Quería un indicador de cero g que también hablara de los niños que pelean contra el cáncer.</p></article>
+        <article><p class="kicker">02 · El vuelo</p><h3>10 de septiembre de 2024</h3><p class="lead">Crew Dragon Resilience despegó rumbo a Polaris Dawn con Jared Isaacman, Scott Poteet, Sarah Gillis y Anna Menon. Asteroid iba con ellos.</p></article>
+        <article><p class="kicker">03 · Cero g</p><h3>La señal es un peluche</h3><p class="lead">Cuando la cápsula entró en microgravedad, Asteroid flotó. Ese gesto confirma, sin instrumentos, que la tripulación ya no tiene peso.</p></article>
+        <article><p class="kicker">04 · El récord</p><h3>1.400 kilómetros</h3><p class="lead">La órbita subió hasta unos 1.400 km, el vuelo tripulado más lejano desde el Apolo, e hizo la primera caminata espacial comercial.</p></article>
+        <article><p class="kicker">05 · La noche</p><h3>Del cosmos al sofá</h3><p class="lead">Después del cosmos, Asteroid regresa a la Tierra para acurrucarse de noche. A petición de Liv, lo recaudado con las réplicas fue para St. Jude.</p></article>
+        <article><p class="kicker">06 · La mascota</p><h3>Un sí, en una palabra</h3><p class="lead">Liv murió el 14 de enero de 2026. Según su familia, preguntó si Asteroid podía ser la mascota de SpaceX. La respuesta pública fue que sí.</p></article>
+      </div>
+      <div class="actions"><a class="btn ghost" href="https://stargracefoundation.org" target="_blank" rel="noreferrer">Fundación de su familia</a></div>
+      <div class="stats">
+        <div><small>Shiba en órbita</small><strong>El primero</strong></div>
+        <div><small>Apogeo</small><strong>1.400 km</strong></div>
+        <div><small>En el espacio</small><strong>5 días</strong></div>
+        <div><small>Caminata</small><strong>La primera comercial</strong></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="moneda">
+    <div class="wrap">
+      <p class="kicker">Solana · token de la comunidad</p>
+      <h2>$Asteroid</h2>
+      <p class="lead">$ASTEROID es una moneda de fans en Solana. No la emite SpaceX, no es de la familia y no es un consejo para invertir. Puedes perder lo que pongas.</p>
+      <div class="stats">
+        <div><small>Precio</small><strong id="price">—</strong></div>
+        <div><small>24 h</small><strong id="chg">—</strong></div>
+        <div><small>Volumen</small><strong id="vol">—</strong></div>
+        <div><small>Capitalización</small><strong id="mcap">—</strong></div>
+      </div>
+      <div class="actions">
+        <a class="btn" href="https://pump.fun/coin/F1ppSHedBsGGwEKH78JVgoqr4xkQHswtsGGLpgM7bCP2" target="_blank" rel="noreferrer">Comprar en Pump.fun</a>
+        <a class="btn ghost" href="https://jup.ag/swap/SOL-F1ppSHedBsGGwEKH78JVgoqr4xkQHswtsGGLpgM7bCP2" target="_blank" rel="noreferrer">Comprar en Jupiter</a>
+        <a class="btn quiet" href="https://dexscreener.com/solana/91tdwygdurpekg8jcwcfzjn7agflgb9zb711fhpygr2j" target="_blank" rel="noreferrer">Ver gráfica</a>
+      </div>
+      <div class="mint">
+        <div>
+          <p class="kicker">Contrato · Solana</p>
+          <code id="mint">F1ppSHedBsGGwEKH78JVgoqr4xkQHswtsGGLpgM7bCP2</code>
+        </div>
+        <button class="btn quiet" type="button" id="copy">Copiar</button>
+      </div>
+    </div>
+  </section>
+</main>
+<footer class="wrap">
+  <p>Homenaje independiente. No está afiliado a SpaceX, a Polaris ni a la familia. La cuenta es una simulación. La moneda es especulativa.</p>
+  <p>
+    <a href="https://shop.spacex.com/products/spacex-asteroid-mascot" target="_blank" rel="noreferrer">Tienda</a>
+    <a href="https://stargracefoundation.org" target="_blank" rel="noreferrer">Fundación</a>
+    <a href="https://pump.fun/coin/F1ppSHedBsGGwEKH78JVgoqr4xkQHswtsGGLpgM7bCP2" target="_blank" rel="noreferrer">Pump.fun</a>
+  </p>
+</footer>
+<script>
+const KEYS = [[0,0,0,0],[20,1.4,.2,.3],[60,14,.62,6],[90,32,1.05,16],[150,72,1.95,48],[175,86,2.2,68],[260,142,4.1,210],[380,188,6.2,560],[480,206,7.25,980],[540,214,7.66,1280]];
+const END = 540, COUNT = -15;
+let t = COUNT, playing = true, rate = 8;
+const smooth = u => { const x = Math.min(1, Math.max(0, u)); return x*x*(3-2*x); };
+function sample(time) {
+  const x = Math.max(0, time);
+  if (x >= END) return { t: END, alt: 214, vel: 7.66, down: 1280 };
+  let i = 0;
+  while (i < KEYS.length - 1 && KEYS[i+1][0] < x) i++;
+  const a = KEYS[i], b = KEYS[i+1], u = smooth((x-a[0])/(b[0]-a[0]));
+  return { t: x, alt: a[1]+(b[1]-a[1])*u, vel: a[2]+(b[2]-a[2])*u, down: a[3]+(b[3]-a[3])*u };
+}
+function pad(n){ return String(n).padStart(2,"0"); }
+function clock(v){
+  const sign = v < 0 ? "T−" : "T+";
+  const a = Math.abs(v);
+  return sign + " " + pad(Math.floor(a/3600)) + ":" + pad(Math.floor((a%3600)/60)) + ":" + pad(Math.floor(a%60));
+}
+function phase(v){
+  if (v < -10) return "Ventana abierta";
+  if (v < 0) return "Cuenta final";
+  if (v < 8) return "Despegue";
+  if (v < 60) return "Ascenso";
+  if (v < 150) return "Máxima presión dinámica";
+  if (v < 180) return "MECO";
+  if (v < 500) return "Segunda etapa";
+  if (v < END) return "Inserción orbital";
+  return "Órbita alcanzada";
+}
+const fmt = n => n.toLocaleString("es-ES", { minimumFractionDigits: n < 30 ? 1 : 0, maximumFractionDigits: n < 30 ? 1 : 0 });
+const svg = document.getElementById("chart");
+function draw(){
+  const s = sample(t);
+  document.getElementById("clock").textContent = clock(t);
+  document.getElementById("phase").textContent = phase(t);
+  document.getElementById("alt").textContent = fmt(s.alt) + " km";
+  document.getElementById("vel").textContent = s.vel.toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " km/s";
+  document.getElementById("down").textContent = fmt(s.down) + " km";
+  const yMax = Math.max(40, s.alt * 1.28);
+  const xMax = Math.max(80, Math.min(END, Math.max(0, t) * 1.18));
+  const pts = [[0,0]];
+  const end = Math.max(0, t);
+  for (let i = 4; i < end; i += 4) { const p = sample(i); pts.push([p.t, p.alt]); }
+  if (end > 0) pts.push([end, s.alt]);
+  const X = v => 48 + (v / xMax) * 570;
+  const Y = v => 210 - (v / yMax) * 180;
+  let d = pts.map((p,i) => (i ? "L" : "M") + X(p[0]).toFixed(1) + " " + Y(p[1]).toFixed(1)).join(" ");
+  const last = pts[pts.length-1], prev = pts[pts.length-2] || [last[0], last[1]+1];
+  const ang = Math.atan2(Y(last[1]) - Y(prev[1]), X(last[0]) - X(prev[0])) * 180 / Math.PI + 90;
+  svg.innerHTML = '<path d="'+d+'" fill="none" stroke="#3ad7ff" stroke-width="2"/>' +
+    '<g transform="translate('+X(last[0]).toFixed(1)+' '+Y(last[1]).toFixed(1)+') rotate('+ang.toFixed(1)+')"><path d="M0 -13 L5 -2 L4 8 L0 12 L-4 8 L-5 -2 Z M-4 4 L-10 11 L-3 7 M4 4 L10 11 L3 7" fill="#3ad7ff"/></g>';
+}
+setInterval(() => {
+  if (!playing || t >= END) { if (t >= END) playing = false; return; }
+  t = Math.min(END, t + 0.1 * (t < 0 ? 1 : rate));
+  draw();
+}, 100);
+draw();
+document.getElementById("play").onclick = () => {
+  playing = !playing;
+  document.getElementById("play").textContent = playing ? "Pausa" : "Seguir";
+};
+document.getElementById("replay").onclick = () => { t = COUNT; playing = true; document.getElementById("play").textContent = "Pausa"; draw(); };
+document.querySelectorAll("[data-rate]").forEach(btn => btn.onclick = () => {
+  rate = Number(btn.dataset.rate);
+  document.querySelectorAll("[data-rate]").forEach(b => b.setAttribute("aria-pressed", b === btn ? "true" : "false"));
+});
+document.getElementById("copy").onclick = async () => {
+  try { await navigator.clipboard.writeText(document.getElementById("mint").textContent); document.getElementById("copy").textContent = "Copiado"; }
+  catch { document.getElementById("copy").textContent = "Copia manual"; }
+};
+function usd(n){ if (n == null || !isFinite(n)) return "—"; if (n > 0 && n < 1) return "$" + n.toPrecision(3); return n.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }); }
+fetch("https://api.dexscreener.com/latest/dex/tokens/F1ppSHedBsGGwEKH78JVgoqr4xkQHswtsGGLpgM7bCP2")
+  .then(r => r.json())
+  .then(data => {
+    const pairs = (data.pairs || []).filter(p => p.chainId === "solana").sort((a,b) => (b.liquidity?.usd||0) - (a.liquidity?.usd||0));
+    const top = pairs[0];
+    if (!top) return;
+    document.getElementById("price").textContent = usd(Number(top.priceUsd));
+    const c = top.priceChange?.h24;
+    document.getElementById("chg").textContent = c == null ? "—" : (c >= 0 ? "+" : "−") + Math.abs(c).toLocaleString("es-ES", { maximumFractionDigits: 2 }) + "%";
+    document.getElementById("vol").textContent = usd(top.volume?.h24);
+    document.getElementById("mcap").textContent = usd(top.marketCap);
+  }).catch(() => {});
+</script>
+</body>
+</html>

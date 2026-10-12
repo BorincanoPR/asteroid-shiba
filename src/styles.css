@@ -1,0 +1,79 @@
+@import "tailwindcss";
+
+@theme {
+  --color-void: #04060e;
+  --color-panel: #09111c;
+  --color-line: #173049;
+  --color-frost: #e7f6ff;
+  --color-steel: #8eabc0;
+  --color-signal: #3ad7ff;
+  --font-display: "Barlow Condensed", "Arial Narrow", sans-serif;
+  --font-sans: "IBM Plex Sans", system-ui, sans-serif;
+}
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background-color: var(--color-void);
+    background-image:
+      linear-gradient(color-mix(in srgb, var(--color-signal) 7%, transparent) 1px, transparent 1px),
+      linear-gradient(
+        90deg,
+        color-mix(in srgb, var(--color-signal) 7%, transparent) 1px,
+        transparent 1px
+      );
+    background-size: 72px 72px;
+    color: var(--color-frost);
+    font-family: var(--font-sans);
+  }
+
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-signal);
+    outline-offset: 3px;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+}
+
+@keyframes count-blink {
+  50% {
+    opacity: 0.45;
+  }
+}
+
+.countdown-hot {
+  animation: count-blink 1s steps(1, end) infinite;
+}
+
+.hud {
+  box-shadow:
+    inset 0 0 40px color-mix(in srgb, var(--color-signal) 12%, transparent),
+    0 0 32px color-mix(in srgb, var(--color-signal) 16%, transparent);
+}
+
+.soon {
+  text-shadow: 0 0 28px color-mix(in srgb, var(--color-signal) 75%, transparent);
+}
+
+.buy-glow {
+  box-shadow: 0 0 24px color-mix(in srgb, var(--color-signal) 45%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .countdown-hot {
+    animation: none;
+  }
+}
